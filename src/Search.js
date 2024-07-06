@@ -2,9 +2,12 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 import OPENAI_API_KEY from './key';
+import ResponseDisplay from './Response';
+import { useNavigate } from 'react-router-dom';
 
 const SearchComponent = () => {
     const [searchQuery, setSearchQuery] = useState('');
+    const navigate = useNavigate();
 
     const handleSearch = async (e) => {
         e.preventDefault();
@@ -26,7 +29,10 @@ const SearchComponent = () => {
                 }
             );
 
-            console.log(response.data.choices[0].message.content);
+            // console.log(response.data.choices[0].message.content);
+            const article = response.data.choices[0].message.content;
+            navigate('/article', { state: { article } });
+
         } catch (error) {
             console.error('Error generating response:', error);
         }
@@ -69,6 +75,7 @@ const SearchComponent = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 />
+                {/* <ResponseDisplay responseContent={responseContent} /> */}
                 <div className="styled-select no-js">
                 <div className="hide-arrow">
                     <select id="searchLanguage" name="language">
@@ -341,9 +348,9 @@ const SearchComponent = () => {
             <input type="hidden" defaultValue="Go" name="go" />
             </fieldset>
         </form>
+        
         </div>
         )
-    
 }
 
 export default SearchComponent;
