@@ -1,13 +1,43 @@
 import React, { useState } from 'react';
+import axios from 'axios';
+
+import OPENAI_API_KEY from './key';
 
 const SearchComponent = () => {
     const [searchQuery, setSearchQuery] = useState('');
+
+    const handleSearch = async (e) => {
+        e.preventDefault();
+
+        try {
+            const response = await axios.post(
+                'https://api.openai.com/v1/chat/completions',
+                {
+                    model: 'gpt-3.5-turbo',
+                    messages: [
+                        { role: 'user', content: `Generate a Wikipedia style article on the following topic: ${searchQuery}` }
+                    ],
+                },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${OPENAI_API_KEY}`,
+                    },
+                }
+            );
+
+            console.log(response.data.choices[0].message.content);
+        } catch (error) {
+            console.error('Error generating response:', error);
+        }
+    };
 
     return (
         <div role="search" className="search-container">
         <form
             className="pure-form"
             id="search-form"
+            onSubmit={handleSearch} 
             // action="//www.wikipedia.org/search-redirect.php"
             data-el-section="search"
         >
