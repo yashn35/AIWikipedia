@@ -73,7 +73,30 @@ const SearchComponent = () => {
         try {
 
             const DallEIntroPromise = generateDalleImage(`Generate an image to capture the following topic: ${searchQuery}.`)
-            console.log(DallEIntroPromise)
+
+
+            const gpt4OutlinePromise = GPT4TurboGeneration(`Generate an outline about this topic in this array format: ${searchQuery} 
+                                        PLEASE ONLY FOLLOW THIS TEMPLATE TO GENERATE THE SECTIONS - ONLY MAKE IN ARRAY FORMAT - THIS INSTRUCTION IS VERY IMPORTANT:::
+                                        [
+                                            {
+                                              "title": "History",
+                                              "subsections": [
+                                                { "title": "Early history", "id": "Early_history" },
+                                                { "title": "Creation", "id": "Creation" },
+                                                // Other subsections
+                                              ]
+                                            },
+                                            {
+                                              "title": "Professional basketball",
+                                              "subsections": [
+                                                { "title": "College basketball", "id": "College_basketball" },
+                                                { "title": "High school basketball", "id": "High_school_basketball" },
+                                                // Other subsections
+                                              ]
+                                            }
+                                            // Other sections generate in the above format
+                                          ]`)
+
             const gpt4TaglineImg1Promise = GPT4TurboGeneration(`Generate a short 5-7 word tagline for the image about the following topic; NO QUOTATION MARKS: ${searchQuery}`)
             const gpt4IntroPromise = GPT4TurboGeneration(`Generate a Wikipedia style introduction on the following topic: ${searchQuery}. Please use the following formatting to generate the text, THIS SHOULD BE A FEW PARAGRAPHS: 
             PLEASE ONLY FOLLOW THIS TEMPLATE TO GENERATE THE TEXT - THIS INSTRUCTION IS VERY IMPORTANT::: 
@@ -349,17 +372,20 @@ const SearchComponent = () => {
             </a>
             .`);
 
-            const [gpt4TaglineImg1Response, gpt4IntroResponse, DallEIntroResponse] = await Promise.all([
+            const [gpt4OutlineResponse, gpt4TaglineImg1Response, gpt4IntroResponse, DallEIntroResponse] = await Promise.all([
+                gpt4OutlinePromise,
                 gpt4TaglineImg1Promise,
                 gpt4IntroPromise,
                 DallEIntroPromise
             ]);
             
+            const gpt4Outline = gpt4OutlineResponse.data.choices[0].message.content;
             const gpt4Img1 = gpt4TaglineImg1Response.data.choices[0].message.content;
             const gpt4Intro = gpt4IntroResponse.data.choices[0].message.content;
             const DallEIntro = DallEIntroResponse.data.data[0].url;
 
             navigate('/article', { state: { articles: {
+                outline: gpt4Outline, 
                 tagline1: gpt4Img1,
                 intro: gpt4Intro,
                 introImg: DallEIntro

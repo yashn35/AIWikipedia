@@ -3,9 +3,14 @@ import React, { useState } from 'react';
 import parse from 'html-react-parser';
 import './article.css';
 
-const Response = ({ responseContent, introImg, tagline1, searchQuery }) => {
+const Response = ({ responseContent, introImg, tagline1, outline, searchQuery }) => {
 
     const parsedContent = parse(responseContent);
+    console.log("HEYYYYYYYYYYYYY PRINT CHECK")
+    outline = JSON.parse(outline);
+    console.log(Array.isArray(outline));
+    console.log(typeof outline);
+    // {outline.map((section, index) => console.log(section))};
 
     const [expandedSections, setExpandedSections] = useState({
         History: false,
@@ -621,7 +626,62 @@ const Response = ({ responseContent, introImg, tagline1, searchQuery }) => {
                       <div className="vector-toc-text">(Top)</div>
                     </a>
                   </li>
-                  <li
+                  
+                  {outline.map((section, index) => (
+                    <li
+                    key={section.title}
+                    id={`toc-${section.title.replace(/\s+/g, '_')}`}
+                    className="vector-toc-list-item vector-toc-level-1"
+                    >
+                    <a className="vector-toc-link" href={`#${section.title}`}>
+                        <div className="vector-toc-text">
+                        <span className="vector-toc-numb">{index + 1}</span>
+                        <span>{section.title}</span>
+                        </div>
+                    </a>
+                    <button
+                        aria-controls={`toc-${section.title.replace(/\s+/g, '_')}-sublist`}
+                        className="cdx-button cdx-button--weight-quiet cdx-button--icon-only vector-toc-toggle"
+                        onClick={() => toggleSection(section.title)}
+                    >
+                        <span
+                        className={`vector-icon-mw-ui-icon-wikimedia-${
+                            expandedSections[section.title] ? 'collapse' : 'expand'
+                        }`}
+                        />
+                        <span>Toggle {section.title} subsection</span>
+                    </button>
+                    {expandedSections[section.title] && (
+                        <ul
+                        id={`toc-${section.title.replace(/\s+/g, '_')}-sublist`}
+                        className="vector-toc-list"
+                        >
+                        {section.subsections.map((subsection, subIndex) => (
+                            <li
+                            key={subsection.id}
+                            id={`toc-${subsection.id}`}
+                            className="vector-toc-list-item vector-toc-level-2"
+                            >
+                            <a className="vector-toc-link" href={`#${subsection.id}`}>
+                                <div className="vector-toc-text">
+                                <span className="vector-toc-numb">
+                                    {index + 1}.{subIndex + 1}
+                                </span>
+                                <span>{subsection.title}</span>
+                                </div>
+                            </a>
+                            <ul
+                                id={`toc-${subsection.id}-sublist`}
+                                className="vector-toc-list"
+                            ></ul>
+                            </li>
+                        ))}
+                        </ul>
+                    )}
+                    </li>
+                ))}
+                  
+                  {/* <li
                     id="toc-History"
                     className="vector-toc-list-item vector-toc-level-1"
                   >
@@ -763,8 +823,8 @@ const Response = ({ responseContent, introImg, tagline1, searchQuery }) => {
                         ></ul>
                       </li>
                     </ul>)}
-                  </li>
-                  <li
+                  </li> HISTORY tab*/} 
+                  {/* <li
                     id="toc-Rules_and_regulations"
                     className="vector-toc-list-item vector-toc-level-1"
                   >
@@ -1301,7 +1361,7 @@ const Response = ({ responseContent, introImg, tagline1, searchQuery }) => {
                         ></ul>
                       </li>
                     </ul>
-                  </li>
+                  </li> */}
                 </ul>
               </div>
             </div>

@@ -9,7 +9,7 @@ function GenerateArticle() {
   return (
     <div>
       {/* <h1>AI Generated Wikipedia Article</h1> */}
-      <Response responseContent={articles.intro} introImg={articles.introImg} tagline1={articles.tagline1} searchQuery={searchQuery} />
+      <Response responseContent={articles.intro} introImg={articles.introImg} tagline1={articles.tagline1} outline={articles.outline} searchQuery={searchQuery} />
     </div>
   );
 }
