@@ -2309,7 +2309,7 @@ html.skin-theme-clientpref-night .notheme{
         display:none
     }
     .vector-toc .vector-toc-toggle{
-        display:none;
+        /* display:none; */
         transition:100ms;
         position:absolute;
         left:-11px;
@@ -2350,9 +2350,6 @@ html.skin-theme-clientpref-night .notheme{
         display:none
     }
     .client-js .vector-toc .vector-toc-level-1.vector-toc-list-item-expanded .vector-toc-list-item{
-        display:block
-    }
-    .client-js .vector-toc .vector-toc-toggle{
         display:block
     }
     .client-js .vector-toc .vector-toc-level-1.vector-toc-list-item-expanded .vector-toc-toggle{
@@ -4684,4 +4681,20 @@ fieldset label.cdx-label__label .cdx-label__label__text{
 }
 .cdx-message-enter-from,.cdx-message-leave-to{
     opacity:0
+}
+.vector-icon-mw-ui-icon-wikimedia-expand,
+.vector-icon-mw-ui-icon-wikimedia-collapse {
+  /* Styles for your icons */
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+.vector-icon-mw-ui-icon-wikimedia-expand {
+  background-image: url('../public/right-arrow.svg');
+}
+
+.vector-icon-mw-ui-icon-wikimedia-collapse {
+  background-image: url('../public/down-arrow.svg');
 }

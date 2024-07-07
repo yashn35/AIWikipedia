@@ -1,8 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 
+import parse from 'html-react-parser';
 import './article.css';
 
-const Response = ({ responseContent }) => {
+const Response = ({ responseContent, introImg, tagline1, searchQuery }) => {
+
+    const parsedContent = parse(responseContent);
+
+    const [expandedSections, setExpandedSections] = useState({
+        History: false,
+        RulesAndRegulations: true,
+      });
+    
+      const toggleSection = (sectionId) => {
+        setExpandedSections(prev => ({
+          ...prev,
+          [sectionId]: !prev[sectionId]
+        }));
+      };
+
     return (
         <>
   <meta charSet="UTF-8" />
@@ -263,29 +279,29 @@ const Response = ({ responseContent }) => {
           </div>
         </nav>
         <a href="/wiki/Main_Page" className="mw-logo">
-          <img
+          {/* <img
             className="mw-logo-icon"
             src="/static/images/icons/wikipedia.png"
             alt=""
             aria-hidden="true"
             height={50}
             width={50}
-          />
+          /> */}
           <span className="mw-logo-container skin-invert">
-            <img
+            {/* <img
               className="mw-logo-wordmark"
               alt="Wikipedia"
               src="/static/images/mobile/copyright/wikipedia-wordmark-en.svg"
               style={{ width: "7.5em", height: "1.125em" }}
-            />
-            <img
+            /> */}
+            {/* <img
               className="mw-logo-tagline"
               alt="The Free Encyclopedia"
-              src="/static/images/mobile/copyright/wikipedia-tagline-en.svg"
+            //   src="/static/images/mobile/copyright/wikipedia-tagline-en.svg"
               width={117}
               height={13}
               style={{ width: "7.3125em", height: "0.8125em" }}
-            />
+            /> */}
           </span>
         </a>
       </div>
@@ -566,11 +582,13 @@ const Response = ({ responseContent }) => {
             aria-label="Contents"
             data-event-name="ui.sidebar-toc"
             className="mw-table-of-contents-container vector-toc-landmark"
+            style={{ display: 'block', position: 'static' }} 
           >
             <div
               id="vector-toc-pinned-container"
               className="vector-pinned-container"
             >
+
               <div
                 id="vector-toc"
                 className="vector-toc vector-pinnable-element"
@@ -616,10 +634,13 @@ const Response = ({ responseContent }) => {
                     <button
                       aria-controls="toc-History-sublist"
                       className="cdx-button cdx-button--weight-quiet cdx-button--icon-only vector-toc-toggle"
+                      onClick={() => toggleSection('History')}
                     >
-                      <span className="vector-icon mw-ui-icon-wikimedia-expand" />
+                      <span className={`vector-icon-mw-ui-icon-wikimedia-${expandedSections.History ? 'collapse' : 'expand'}`} />
                       <span>Toggle History subsection</span>
                     </button>
+                    
+                    {expandedSections.History && (
                     <ul id="toc-History-sublist" className="vector-toc-list">
                       <li
                         id="toc-Early_history"
@@ -741,7 +762,7 @@ const Response = ({ responseContent }) => {
                           className="vector-toc-list"
                         ></ul>
                       </li>
-                    </ul>
+                    </ul>)}
                   </li>
                   <li
                     id="toc-Rules_and_regulations"
@@ -1324,7 +1345,7 @@ const Response = ({ responseContent }) => {
               </div>
             </nav>
             <h1 id="firstHeading" className="firstHeading mw-first-heading">
-              <span className="mw-page-title-main">Basketball</span>
+              <span className="mw-page-title-main">{searchQuery}</span>
             </h1>
             <div
               id="p-lang-btn"
@@ -3953,9 +3974,8 @@ You can view its source [e]"
                   }}
                 />
                 <div role="note" className="hatnote navigation-not-searchable">
-                  This article is about the sport. For the ball used in the
-                  sport, see{" "}
-                  <a href="/wiki/Basketball_(ball)" title="Basketball (ball)">
+                  This article is about {searchQuery}. It is completely AI-generated.
+                  {/* <a href="/wiki/Basketball_(ball)" title="Basketball (ball)">
                     Basketball (ball)
                   </a>
                   . For other uses, see{" "}
@@ -3966,7 +3986,7 @@ You can view its source [e]"
                   >
                     Basketball (disambiguation)
                   </a>
-                  .
+                  . */}
                 </div>
                 <p className="mw-empty-elt"></p>
                 <style
@@ -4294,24 +4314,23 @@ You can view its source [e]"
                     className="mw-file-description"
                   >
                     <img
-                      src="//upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Basketball_pictogram.svg/220px-Basketball_pictogram.svg.png"
-                      decoding="async"
-                      width={220}
-                      height={220}
-                      className="mw-file-element"
-                      srcSet="//upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Basketball_pictogram.svg/330px-Basketball_pictogram.svg.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Basketball_pictogram.svg/440px-Basketball_pictogram.svg.png 2x"
-                      data-file-width={300}
-                      data-file-height={300}
+                        src={introImg}
+                        decoding="async"
+                        width={220}
+                        height={220}
+                        className="mw-file-element"
+                        alt="Generated topic illustration"
                     />
                   </a>
-                  <figcaption>Olympic pictogram for basketball</figcaption>
+                  <figcaption>{tagline1}</figcaption>
                 </figure>
-                <p>
-                  {/* <b>Basketball</b> is a{" "}
-                  <a href="/wiki/Team_sport" title="Team sport">
+                {/* <p> */}
+                {parsedContent}                    
+                  {/* <b>Basketball</b> is a{" "} */}
+                  {/* <a href="/wiki/Team_sport" title="Team sport">
                     team sport
-                  </a>{" "} */}
-                  {responseContent}{" "}
+                  </a>{" "}
+                  {" "}
                   <a href="/wiki/Basketball_court" title="Basketball court">
                     court
                   </a>
@@ -4578,8 +4597,8 @@ You can view its source [e]"
                   <a href="/wiki/EuroLeague_Women" title="EuroLeague Women">
                     EuroLeague Women
                   </a>
-                  .
-                </p>
+                  . */}
+                {/* </p> */}
                 <meta property="mw:PageProp/toc" />
                 <h2>
                   <span className="mw-headline" id="History">

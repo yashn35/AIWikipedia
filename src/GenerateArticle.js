@@ -4,12 +4,12 @@ import Response from './Response';
 
 function GenerateArticle() {
   const location = useLocation();
-  const { article } = location.state;
+  const { articles, searchQuery } = location.state;
 
   return (
     <div>
       {/* <h1>AI Generated Wikipedia Article</h1> */}
-      <Response responseContent={article} />
+      <Response responseContent={articles.intro} introImg={articles.introImg} tagline1={articles.tagline1} searchQuery={searchQuery} />
     </div>
   );
 }
