@@ -49,6 +49,17 @@ function HomePage() {
               height={183}
               alt=""
             />
+            <img
+              src="/Wikipedia_wordmark.svg.png"
+              alt="Wikipedia Wordmark"
+              style={{
+                display: 'block',
+                margin: '0px auto',
+                maxWidth: '70%',
+                height: 'auto',
+                marginBottom: '-40px'
+              }}
+            />
             <h1 className="central-textlogo-wrapper">
               <span className="central-textlogo__image sprite svg-Wikipedia_wordmark">
                 Wikipedia
@@ -2055,8 +2066,7 @@ function HomePage() {
                 className="footer-sidebar-text jsl10n"
                 data-jsl10n="portal.footer-description"
               >
-                Wikipedia is hosted by the Wikimedia Foundation, a non-profit
-                organization that also hosts a range of other projects.
+                Wikipedia AI generates Wikipedia-styled articles on any topic with Generative AI. 
               </div>
               <div className="footer-sidebar-text">
                 <a

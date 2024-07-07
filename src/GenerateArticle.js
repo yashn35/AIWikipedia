@@ -8,7 +8,7 @@ function GenerateArticle() {
 
   return (
     <div>
-      <h1>AI Generated Wikipedia Article</h1>
+      {/* <h1>AI Generated Wikipedia Article</h1> */}
       <Response responseContent={article} />
     </div>
   );

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 import OPENAI_API_KEY from './key';
-import ResponseDisplay from './Response';
 import { useNavigate } from 'react-router-dom';
 
 const SearchComponent = () => {
