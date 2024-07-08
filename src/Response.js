@@ -3,13 +3,15 @@ import React, { useState } from 'react';
 import parse from 'html-react-parser';
 import './article.css';
 
-const Response = ({ responseContent, introImg, tagline1, outline, searchQuery }) => {
+const Response = ({ responseContent, introImg, tagline1, outline, references, searchQuery }) => {
 
     const parsedContent = parse(responseContent);
     console.log("HEYYYYYYYYYYYYY PRINT CHECK")
-    outline = JSON.parse(outline);
+    // outline = JSON.parse(outline);
+    references = JSON.parse(references)
     console.log(Array.isArray(outline));
     console.log(typeof outline);
+    console.log(outline)
     // {outline.map((section, index) => console.log(section))};
 
     const [expandedSections, setExpandedSections] = useState({
@@ -1225,7 +1227,7 @@ const Response = ({ responseContent, introImg, tagline1, outline, searchQuery })
                       id="toc-See_also-sublist"
                       className="vector-toc-list"
                     ></ul>
-                  </li>
+                  </li> 
                   <li
                     id="toc-References"
                     className="vector-toc-list-item vector-toc-level-1"
@@ -4660,7 +4662,53 @@ You can view its source [e]"
                   . */}
                 {/* </p> */}
                 <meta property="mw:PageProp/toc" />
-                <h2>
+                <div className="article-content">
+                {outline.map((section) => (
+                <div key={section.title}>
+                    <h2>{section.title}</h2>
+                    {section.subsections.map((subsection) => (
+                    <div key={subsection.id}>
+                        <h3 id={subsection.id}>{subsection.title}</h3>
+                        {subsection.content && (
+                        <div>
+                            {/* <figure> */}
+                            <figure typeof="mw:File/Thumb">
+                        <a
+                            href={introImg}
+                            className="mw-file-description"
+                        >
+                            <img
+                            src={subsection.content.imageUrl}
+                            decoding="async"
+                            width={165}
+                            height={204}
+                            className="mw-file-element"
+                            // srcSet="//upload.wikimedia.org/wikipedia/commons/thumb/2/20/James_Naismith_at_Springfield_College_circa_1920.jpg/248px-James_Naismith_at_Springfield_College_circa_1920.jpg 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/2/20/James_Naismith_at_Springfield_College_circa_1920.jpg/330px-James_Naismith_at_Springfield_College_circa_1920.jpg 2x"
+                            data-file-width={1080}
+                            data-file-height={1334}
+                            />
+                        </a>
+                        <figcaption>
+                            <a href="/wiki/James_Naismith" title="James Naismith">
+                            {subsection.title}
+                            </a>{" "}
+                            {/* <abbr title="circa">c.</abbr>
+                            <span style={{ whiteSpace: "nowrap" }}> 1920</span> */}
+                        </figcaption>
+                        </figure>
+                            
+                            {/* <p>{subsection.content.paragraph}</p> */}
+                            {subsection.content.paragraph.split('\n\n').map((paragraph, index) => (
+                                <p key={index}>{paragraph}</p>
+                            ))}
+                            </div>
+                            )}
+                        </div>
+                        ))}
+                    </div>
+                    ))}
+                    </div>
+                {/* <h2>
                   <span className="mw-headline" id="History">
                     History
                   </span>
@@ -4669,15 +4717,7 @@ You can view its source [e]"
                   rel="mw-deduplicated-inline-style"
                   href="mw-data:TemplateStyles:r1033289096"
                 />
-                <div role="note" className="hatnote navigation-not-searchable">
-                  Main article:{" "}
-                  <a
-                    href="/wiki/History_of_basketball"
-                    title="History of basketball"
-                  >
-                    History of basketball
-                  </a>
-                </div>
+                
                 <h3>
                   <span className="mw-headline" id="Early_history">
                     Early history
@@ -4700,8 +4740,8 @@ You can view its source [e]"
                   <sup id="cite_ref-6" className="reference">
                     <a href="#cite_note-6">[6]</a>
                   </sup>
-                </p>
-                <h3>
+                </p> */}
+                {/* <h3>
                   <span className="mw-headline" id="Creation">
                     Creation
                   </span>
@@ -5068,8 +5108,8 @@ You can view its source [e]"
                   were taken indoors, and it was convenient to have them split
                   in half and play basketball with five on each side. By
                   1897–98, teams of five became standard.
-                </p>
-                <h3>
+                </p> */}
+                {/* <h3>
                   <span className="mw-headline" id="College_basketball">
                     College basketball
                   </span>
@@ -12753,8 +12793,79 @@ You can view its source [e]"
                       />
                     </li>
                   </ul>
-                </div>
+                </div> */}
                 <h2>
+                  <span className="mw-headline" id="References">
+                    References
+                  </span>
+                </h2>
+                <h3>
+                  <span className="mw-headline" id="Citations">
+                    Citations
+                  </span>
+                </h3>
+                 <div className="reflist">
+                    <div className="mw-references-wrap mw-references-columns">
+                    <ol className="references">
+                        {references.map((reference) => (
+                        <li id={reference.id} key={reference.id}>
+                            <span className="mw-cite-backlink">
+                            <b>
+                                <a href={`#${reference.id.replace('cite_note-', 'cite_ref-')}`}>^</a>
+                            </b>
+                            </span>{" "}
+                            <span className="reference-text">
+                            <cite className="citation news cs1">
+                                {reference.author} ({reference.date}).{" "}
+                                <a rel="nofollow" className="external text" href={reference.url}>
+                                {reference.title}
+                                </a>. <i>{reference.publisher}</i>.{" "}
+                                <a rel="nofollow" className="external text" href={reference.archiveUrl}>
+                                Archived
+                                </a>{" "}
+                                from the original on {reference.archiveDate}.
+                                {reference.accessDate && (
+                                <span className="reference-accessdate"> Retrieved {reference.accessDate}.</span>
+                                )}
+                            </cite>
+                            </span>
+                        </li>
+                        ))}
+                    </ol>
+                    </div>
+                </div>
+
+                {/* <div className="reflist">
+                    <div className="mw-references-wrap mw-references-columns">
+                    <ol className="references">
+                        {references.map((reference) => (
+                        <li id={reference.id} key={reference.id}>
+                            <span className="mw-cite-backlink">
+                            <b>
+                                <a href={`#${reference.id.replace('cite_note-', 'cite_ref-')}`}>^</a>
+                            </b>
+                            </span>{" "}
+                            <span className="reference-text">
+                            <cite className="citation news cs1">
+                                {reference.author} ({reference.date}).{" "}
+                                <a rel="nofollow" className="external text" href={reference.url}>
+                                {reference.title}
+                                </a>. <i>{reference.publisher}</i>.{" "}
+                                <a rel="nofollow" className="external text" href={reference.archiveUrl}>
+                                Archived
+                                </a>{" "}
+                                from the original on {reference.archiveDate}.
+                                {reference.accessDate && (
+                                <span className="reference-accessdate"> Retrieved {reference.accessDate}.</span>
+                                )}
+                            </cite>
+                            </span>
+                        </li>
+                        ))}
+                    </ol>
+                    </div>   
+                </div> */}
+                {/* <h2>
                   <span className="mw-headline" id="Further_reading">
                     Further reading
                   </span>
@@ -12762,8 +12873,8 @@ You can view its source [e]"
                 <link
                   rel="mw-deduplicated-inline-style"
                   href="mw-data:TemplateStyles:r1054258005"
-                />
-                <div className="refbegin" style={{}}>
+                /> */}
+                {/* <div className="refbegin" style={{}}>
                   <ul>
                     <li>
                       <link
@@ -13094,8 +13205,8 @@ You can view its source [e]"
                       />
                     </li>
                   </ul>
-                </div>
-                <h2>
+                </div> */}
+                {/* <h2>
                   <span className="mw-headline" id="External_links">
                     External links
                   </span>
@@ -13113,8 +13224,8 @@ You can view its source [e]"
                     __html:
                       ".mw-parser-output .sister-box .side-box-abovebelow{padding:0.75em 0;text-align:center}.mw-parser-output .sister-box .side-box-abovebelow>b{display:block}.mw-parser-output .sister-box .side-box-text>ul{border-top:1px solid #aaa;padding:0.75em 0;width:217px;margin:0 auto}.mw-parser-output .sister-box .side-box-text>ul>li{min-height:31px}.mw-parser-output .sister-logo{display:inline-block;width:31px;line-height:31px;vertical-align:middle;text-align:center}.mw-parser-output .sister-link{display:inline-block;margin-left:4px;width:182px;vertical-align:middle}"
                   }}
-                />
-                <div
+                /> */}
+                {/* <div
                   role="navigation"
                   aria-labelledby="sister-projects"
                   className="side-box metadata side-box-right sister-box sistersitebox plainlinks"
@@ -13344,12 +13455,12 @@ You can view its source [e]"
                       </ul>
                     </div>
                   </div>
-                </div>
+                </div> */}
                 <link
                   rel="mw-deduplicated-inline-style"
                   href="mw-data:TemplateStyles:r1217611005"
                 />
-                <div className="side-box metadata side-box-right">
+                {/* <div className="side-box metadata side-box-right">
                   <link
                     rel="mw-deduplicated-inline-style"
                     href="mw-data:TemplateStyles:r1126788409"
@@ -13393,13 +13504,13 @@ You can view its source [e]"
                       </ul>
                     </div>
                   </div>
-                </div>
-                <h3>
+                </div> */}
+                {/* <h3>
                   <span className="mw-headline" id="Historical">
                     Historical
                   </span>
-                </h3>
-                <ul>
+                </h3> */}
+                {/* <ul>
                   <li>
                     <a
                       rel="nofollow"
@@ -13595,8 +13706,12 @@ You can view its source [e]"
                       (1861–1939)
                     </a>
                   </li>
-                </ul>
-                <div className="navbox-styles">
+                </ul> */}
+
+
+
+
+                 {/* <div className="navbox-styles">
                   <style
                     data-mw-deduplicate="TemplateStyles:r1129693374"
                     dangerouslySetInnerHTML={{
@@ -13611,7 +13726,8 @@ You can view its source [e]"
                         ".mw-parser-output .navbox{box-sizing:border-box;border:1px solid #a2a9b1;width:100%;clear:both;font-size:88%;text-align:center;padding:1px;margin:1em auto 0}.mw-parser-output .navbox .navbox{margin-top:0}.mw-parser-output .navbox+.navbox,.mw-parser-output .navbox+.navbox-styles+.navbox{margin-top:-1px}.mw-parser-output .navbox-inner,.mw-parser-output .navbox-subgroup{width:100%}.mw-parser-output .navbox-group,.mw-parser-output .navbox-title,.mw-parser-output .navbox-abovebelow{padding:0.25em 1em;line-height:1.5em;text-align:center}.mw-parser-output .navbox-group{white-space:nowrap;text-align:right}.mw-parser-output .navbox,.mw-parser-output .navbox-subgroup{background-color:#fdfdfd}.mw-parser-output .navbox-list{line-height:1.5em;border-color:#fdfdfd}.mw-parser-output .navbox-list-with-group{text-align:left;border-left-width:2px;border-left-style:solid}.mw-parser-output tr+tr>.navbox-abovebelow,.mw-parser-output tr+tr>.navbox-group,.mw-parser-output tr+tr>.navbox-image,.mw-parser-output tr+tr>.navbox-list{border-top:2px solid #fdfdfd}.mw-parser-output .navbox-title{background-color:#ccf}.mw-parser-output .navbox-abovebelow,.mw-parser-output .navbox-group,.mw-parser-output .navbox-subgroup .navbox-title{background-color:#ddf}.mw-parser-output .navbox-subgroup .navbox-group,.mw-parser-output .navbox-subgroup .navbox-abovebelow{background-color:#e6e6ff}.mw-parser-output .navbox-even{background-color:#f7f7f7}.mw-parser-output .navbox-odd{background-color:transparent}.mw-parser-output .navbox .hlist td dl,.mw-parser-output .navbox .hlist td ol,.mw-parser-output .navbox .hlist td ul,.mw-parser-output .navbox td.hlist dl,.mw-parser-output .navbox td.hlist ol,.mw-parser-output .navbox td.hlist ul{padding:0.125em 0}.mw-parser-output .navbox .navbar{display:block;font-size:100%}.mw-parser-output .navbox-title .navbar{float:left;text-align:left;margin-right:0.5em}body.skin--responsive .mw-parser-output .navbox-image img{max-width:none!important}"
                     }}
                   />
-                </div>
+                </div> */}
+                {/*
                 <div
                   role="navigation"
                   className="navbox"
@@ -15486,7 +15602,7 @@ You can view its source [e]"
                       </tr>
                     </tbody>
                   </table>
-                </div>
+                </div> */}
                 <div className="navbox-styles">
                   <link
                     rel="mw-deduplicated-inline-style"
@@ -15499,15 +15615,15 @@ You can view its source [e]"
                   aria-labelledby="Articles_related_to_basketball"
                   style={{ padding: 3 }}
                 >
-                  <table
+                  {/* <table
                     className="nowraplinks mw-collapsible mw-collapsed navbox-inner"
                     style={{
                       borderSpacing: 0,
                       background: "transparent",
                       color: "inherit"
                     }}
-                  >
-                    <tbody>
+                  > */}
+                    {/* <tbody>
                       <tr>
                         <th
                           scope="col"
@@ -26199,10 +26315,10 @@ You can view its source [e]"
                           </div>
                         </td>
                       </tr>
-                    </tbody>
-                  </table>
+                    </tbody> */}
+                  {/* </table> */}
                 </div>
-                <div className="navbox-styles">
+                {/* <div className="navbox-styles">
                   <link
                     rel="mw-deduplicated-inline-style"
                     href="mw-data:TemplateStyles:r1129693374"
@@ -26218,14 +26334,14 @@ You can view its source [e]"
                         ".mw-parser-output .tooltip-dotted{border-bottom:1px dotted;cursor:help}"
                     }}
                   />
-                </div>
-                <div
+                </div> */}
+                {/* <div
                   role="navigation"
                   className="navbox authority-control"
                   aria-labelledby="Authority_control_databases_frameless&#124;text-top&#124;10px&#124;alt=Edit_this_at_Wikidata&#124;link=https&#58;//www.wikidata.org/wiki/Q5372#identifiers&#124;class=noprint&#124;Edit_this_at_Wikidata"
                   style={{ padding: 3 }}
-                >
-                  <table
+                > */}
+                  {/* <table
                     className="nowraplinks hlist mw-collapsible autocollapse navbox-inner"
                     style={{
                       borderSpacing: 0,
@@ -26411,8 +26527,8 @@ You can view its source [e]"
                         </td>
                       </tr>
                     </tbody>
-                  </table>
-                </div>
+                  </table> */}
+                {/* </div> */}
                 {/* 
 NewPP limit report
 Parsed by mw‐web.codfw.main‐6b48fcb9d6‐p25gf
@@ -26456,7 +26572,7 @@ Transclusion expansion time report (%,ms,calls,template)
                 alt="" width="1" height="1" style="border: none; position:
                 absolute;"&gt;
               </noscript>
-              <div className="printfooter" data-nosnippet="">
+              {/* <div className="printfooter" data-nosnippet="">
                 Retrieved from "
                 <a
                   dir="ltr"
@@ -26465,10 +26581,10 @@ Transclusion expansion time report (%,ms,calls,template)
                   https://en.wikipedia.org/w/index.php?title=Basketball&amp;oldid=1230159810
                 </a>
                 "
-              </div>
-            </div>
-            <div id="catlinks" className="catlinks" data-mw="interface">
-              <div id="mw-normal-catlinks" className="mw-normal-catlinks">
+              </div> */}
+            {/* </div>
+            <div id="catlinks" className="catlinks" data-mw="interface"> */}
+              {/* <div id="mw-normal-catlinks" className="mw-normal-catlinks">
                 <a href="/wiki/Help:Category" title="Help:Category">
                   Categories
                 </a>
@@ -26755,7 +26871,7 @@ Transclusion expansion time report (%,ms,calls,template)
                     </a>
                   </li>
                 </ul>
-              </div>
+              </div> */}
             </div>
           </div>
         </main>

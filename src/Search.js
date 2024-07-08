@@ -4,6 +4,10 @@ import axios from 'axios';
 import OPENAI_API_KEY from './key';
 import { useNavigate } from 'react-router-dom';
 
+const generateCaption = (prompt) => {
+    return GPT4TurboGeneration(`Generate a brief, engaging caption for an image about ${prompt}. The caption should be no more than 15 words.`);
+};
+
 const GPT4TurboGeneration = (prompt) => {
     return axios.post(
         'https://api.openai.com/v1/chat/completions',
@@ -74,32 +78,81 @@ const SearchComponent = () => {
 
             const DallEIntroPromise = generateDalleImage(`Generate an image to capture the following topic: ${searchQuery}.`)
 
+            const gpt4OReferencesPromise = GPT4TurboGeneration(`Generate a set of around 10 fake references on this topic: ${searchQuery}. 
+                                      PLEASE ONLY FOLLOW THIS TEMPLATE TO GENERATE THE REFERENCES - ONLY MAKE IN ARRAY FORMAT - THIS INSTRUCTION IS VERY IMPORTANT:::
+                                      [
+                                        {
+                                          "id": "cite_note-1",
+                                          "author": "Griffiths, Sian",
+                                          "date": "September 20, 2010",
+                                          "title": "The Canadian who invented basketball",
+                                          "publisher": "BBC News",
+                                          "url": "https://www.bbc.co.uk/news/world-us-canada-11348053",
+                                          "archiveUrl": "https://web.archive.org/web/20120425025454/http://www.bbc.co.uk/news/world-us-canada-11348053",
+                                          "accessDate": "September 14, 2011"
+                                        },
+                                        {
+                                          "id": "cite_note-2",
+                                          "author": "Maria",
+                                          "date": "January 3, 2023",
+                                          "title": "Ranking The Top 10 Most Popular Sports In The World in 2023",
+                                          "publisher": "Sports Virsa",
+                                          "url": "https://sportsvirsa.com/most-popular-sports/",
+                                          "archiveUrl": "https://web.archive.org/web/20230925040942/https://sportsvirsa.com/most-popular-sports/"
+                                        }
+                                        // Other references
+                                      ]`);
 
-            const gpt4OutlinePromise = GPT4TurboGeneration(`Generate an outline about this topic in this array format: ${searchQuery} 
-                                        PLEASE ONLY FOLLOW THIS TEMPLATE TO GENERATE THE SECTIONS - ONLY MAKE IN ARRAY FORMAT - THIS INSTRUCTION IS VERY IMPORTANT:::
-                                        [
-                                            {
-                                              "title": "History",
-                                              "subsections": [
-                                                { "title": "Early history", "id": "Early_history" },
-                                                { "title": "Creation", "id": "Creation" },
-                                                // Other subsections
-                                              ]
-                                            },
-                                            {
-                                              "title": "Professional basketball",
-                                              "subsections": [
-                                                { "title": "College basketball", "id": "College_basketball" },
-                                                { "title": "High school basketball", "id": "High_school_basketball" },
-                                                // Other subsections
-                                              ]
-                                            }
-                                            // Other sections generate in the above format
-                                          ]`)
+            const gpt4OutlinePromise = GPT4TurboGeneration(`Generate an outline about this topic in this array format, including a detailed paragraph and an image URL for each subsection: ${searchQuery} 
+                                      PLEASE ONLY FOLLOW THIS TEMPLATE TO GENERATE THE SECTIONS - ONLY MAKE IN ARRAY FORMAT - THIS INSTRUCTION IS VERY IMPORTANT:::
+                                      HAVE AROUND 4-5 SECTIONS, and the "paragraph" within each section make around 2-3 paragraphs broken apart <- this is important
+                                      [
+                                          {
+                                            "title": "History",
+                                            "subsections": [
+                                              { 
+                                                "title": "Early history", 
+                                                "id": "Early_history",
+                                                "content": {
+                                                  "paragraph": "Early history detailed content...", // THIS SHOULD BE AT LEAST 2 PARAGRAPHS - VARY THE LENGTH OF THE PARAGRAPH - BETWEEN 2-3 PARAGRAPH - THIS IS IMPORTANT
+                                                }
+                                              },
+                                              { 
+                                                "title": "Creation", 
+                                                "id": "Creation",
+                                                "content": {
+                                                  "paragraph": "Creation detailed content...", // THIS SHOULD BE AT LEAST 2 PARAGRAPHS - VARY THE LENGTH OF THE PARAGRAPH - BETWEEN 2-3 PARAGRAPH - THIS IS IMPORTANT2
+                                                }
+                                              }
+                                              // Other subsections
+                                            ]
+                                          },
+                                          {
+                                            "title": "Professional basketball",
+                                            "subsections": [
+                                              { 
+                                                "title": "College basketball", 
+                                                "id": "College_basketball",
+                                                "content": {
+                                                  "paragraph": "College basketball detailed content...",
+                                                }
+                                              },
+                                              { 
+                                                "title": "High school basketball", 
+                                                "id": "High_school_basketball",
+                                                "content": {
+                                                  "paragraph": "High school basketball detailed content...",
+                                                }
+                                              }
+                                              // Other subsections
+                                            ]
+                                          }
+                                          // Other sections generate in the above format
+                                        ]`);
 
             const gpt4TaglineImg1Promise = GPT4TurboGeneration(`Generate a short 5-7 word tagline for the image about the following topic; NO QUOTATION MARKS: ${searchQuery}`)
             const gpt4IntroPromise = GPT4TurboGeneration(`Generate a Wikipedia style introduction on the following topic: ${searchQuery}. Please use the following formatting to generate the text, THIS SHOULD BE A FEW PARAGRAPHS: 
-            PLEASE ONLY FOLLOW THIS TEMPLATE TO GENERATE THE TEXT - THIS INSTRUCTION IS VERY IMPORTANT::: 
+            IMPORTANT IMPORTANT, PLEASE ONLY FOLLOW THIS TEMPLATE TO GENERATE THE TEXT - THIS INSTRUCTION IS VERY IMPORTANT BUT DO NOT INCLUDE {" "}           ::: 
             <a href="/wiki/Team_sport" title="Team sport">
                 team sport
             </a>{" "}
@@ -372,20 +425,50 @@ const SearchComponent = () => {
             </a>
             .`);
 
-            const [gpt4OutlineResponse, gpt4TaglineImg1Response, gpt4IntroResponse, DallEIntroResponse] = await Promise.all([
+            const [gpt4OReferencesResponse, gpt4OutlineResponse, gpt4TaglineImg1Response, gpt4IntroResponse, DallEIntroResponse] = await Promise.all([
+                gpt4OReferencesPromise,
                 gpt4OutlinePromise,
                 gpt4TaglineImg1Promise,
                 gpt4IntroPromise,
                 DallEIntroPromise
             ]);
             
-            const gpt4Outline = gpt4OutlineResponse.data.choices[0].message.content;
+            const gpt4References = gpt4OReferencesResponse.data.choices[0].message.content;
+            let gpt4Outline = gpt4OutlineResponse.data.choices[0].message.content;
             const gpt4Img1 = gpt4TaglineImg1Response.data.choices[0].message.content;
             const gpt4Intro = gpt4IntroResponse.data.choices[0].message.content;
             const DallEIntro = DallEIntroResponse.data.data[0].url;
 
+            // Generate DALL-E images for each subsection
+            gpt4Outline = gpt4Outline.replace(/\n/g, ' ')
+                         .replace(/:\s*"(.+?)"/g, function(match, p1) {
+                             return ': "' + p1.replace(/"/g, "'") + '"';
+                         });
+            console.log('OUTLINE:::::', gpt4Outline)        
+            gpt4Outline = JSON.parse(gpt4Outline)
+
+            const outlineWithImages = await Promise.all(gpt4Outline.map(async (section) => {
+                const sectionWithImages = await Promise.all(section.subsections.map(async (subsection) => {
+                    const imagePrompt = `${searchQuery} related to ${subsection.title}`;
+                    const [imageResponse, captionResponse] = await Promise.all([
+                        generateDalleImage(imagePrompt),
+                        generateCaption(imagePrompt)
+                    ]);
+                    return {
+                        ...subsection,
+                        content: {
+                            ...subsection.content,
+                            imageUrl: imageResponse.data.data[0].url,
+                            imageCaption: captionResponse.data.choices[0].message.content
+                        }
+                    };
+                }));
+                return { ...section, subsections: sectionWithImages };
+            }));    
+
             navigate('/article', { state: { articles: {
-                outline: gpt4Outline, 
+                references: gpt4References, 
+                outline: outlineWithImages, 
                 tagline1: gpt4Img1,
                 intro: gpt4Intro,
                 introImg: DallEIntro
