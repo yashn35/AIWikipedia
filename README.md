@@ -1,4 +1,7 @@
-# Getting Started with Create React App
+# AI Wikipedia 
+### Turn any topic into a Wikipedia-style article 
+
+![demo](demo.gif)
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
